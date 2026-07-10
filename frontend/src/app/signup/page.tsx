@@ -153,7 +153,7 @@ export default function SignupPage() {
               <input
                 type="email"
                 required
-                className="w-full border border-[#8d9db6] rounded-sm px-3 py-1.5 text-[14px] focus:outline-none focus:ring-[2px] focus:ring-[#0073bb] focus:border-[#0073bb]"
+                className="w-full border border-[#8d9db6] rounded-sm px-3 py-1.5 text-[14px] text-[#16191f] focus:outline-none focus:ring-[2px] focus:ring-[#0073bb] focus:border-[#0073bb]"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -169,7 +169,7 @@ export default function SignupPage() {
               <input
                 type="text"
                 required
-                className="w-full border border-[#8d9db6] rounded-sm px-3 py-1.5 text-[14px] focus:outline-none focus:ring-[2px] focus:ring-[#0073bb] focus:border-[#0073bb]"
+                className="w-full border border-[#8d9db6] rounded-sm px-3 py-1.5 text-[14px] text-[#16191f] focus:outline-none focus:ring-[2px] focus:ring-[#0073bb] focus:border-[#0073bb]"
                 value={accountName}
                 onChange={(e) => setAccountName(e.target.value)}
               />
@@ -181,7 +181,7 @@ export default function SignupPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   required
-                  className="w-full border border-[#8d9db6] rounded-sm px-3 py-1.5 pr-10 text-[14px] focus:outline-none focus:ring-[2px] focus:ring-[#0073bb] focus:border-[#0073bb]"
+                  className="w-full border border-[#8d9db6] rounded-sm px-3 py-1.5 pr-10 text-[14px] text-[#16191f] focus:outline-none focus:ring-[2px] focus:ring-[#0073bb] focus:border-[#0073bb]"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
