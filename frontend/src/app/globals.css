@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
-/* Force light mode always - AWS console never has dark mode */
+/* =============================================
+   DISABLE DARK MODE - AWS Console is always light
+   ============================================= */
+@variant dark (&:where(.dark, .dark *));
+
 :root {
-  color-scheme: light;
+  color-scheme: light only;
   --background: #f2f3f3;
   --foreground: #16191f;
 }
@@ -14,28 +18,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Override any OS-level dark mode preference */
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: light;
-    --background: #f2f3f3;
-    --foreground: #16191f;
-  }
-  body {
-    background: #f2f3f3 !important;
-    color: #16191f !important;
-  }
-}
-
-body {
+html, body {
   background: #f2f3f3;
   color: #16191f;
   font-family: "Amazon Ember", "Helvetica Neue", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Ensure inputs always show dark text regardless of mode */
+/* Always white backgrounds for inputs */
 input, textarea, select {
-  color: #16191f;
-  background-color: #ffffff;
+  color: #16191f !important;
+  background-color: #ffffff !important;
 }
