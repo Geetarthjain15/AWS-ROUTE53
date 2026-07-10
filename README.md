@@ -102,10 +102,64 @@ This application follows a modern decoupled architecture:
 3. **Data Layer**: SQLAlchemy ORM manages the connection to a local SQLite database (`AWS_CLONE.db`).
 
 ## 🗄 Database Schema
-The SQLite database consists of 3 primary tables:
-- **`users`**: Stores mocked IAM credentials (`id`, `email`, `account_name`, `password`, `created_at`).
-- **`hosted_zones`**: Stores domains (`id`, `name`, `type`, `comment`, `created_at`).
-- **`dns_records`**: Stores DNS entries (`id`, `zone_id` (FK), `name`, `type`, `value`, `ttl`, `routing_policy`). Linked to `hosted_zones` via Foreign Key with `ON DELETE CASCADE`.
+
+The SQLite database consists of **3 tables** managed via SQLAlchemy ORM. The schema is defined in [`backend/models.py`](./backend/models.py).
+
+---
+
+### 📋 `users`
+Stores mocked IAM user credentials for authentication.
+
+| Column | Type | Constraints |
+|---|---|---|
+| `id` | STRING (UUID) | PRIMARY KEY |
+| `email` | STRING | UNIQUE, NOT NULL, Indexed |
+| `account_name` | STRING | NOT NULL |
+| `password` | STRING | NOT NULL *(plain-text, mocked)* |
+| `created_at` | DATETIME | DEFAULT: current UTC timestamp |
+
+---
+
+### 🌐 `hosted_zones`
+Stores all DNS Hosted Zones created by users.
+
+| Column | Type | Constraints |
+|---|---|---|
+| `id` | STRING (UUID) | PRIMARY KEY |
+| `name` | STRING | NOT NULL, Indexed |
+| `type` | STRING | DEFAULT: `"Public"` |
+| `comment` | STRING | NULLABLE |
+| `created_at` | DATETIME | DEFAULT: current UTC timestamp |
+
+---
+
+### 📝 `dns_records`
+Stores individual DNS records belonging to a Hosted Zone.
+
+| Column | Type | Constraints |
+|---|---|---|
+| `id` | STRING (UUID) | PRIMARY KEY |
+| `zone_id` | STRING (UUID) | FOREIGN KEY → `hosted_zones.id` |
+| `name` | STRING | NOT NULL |
+| `type` | STRING | NOT NULL *(A, AAAA, CNAME, TXT, MX, NS, PTR, SRV, CAA)* |
+| `value` | STRING | NOT NULL |
+| `ttl` | INTEGER | DEFAULT: `300` (seconds) |
+| `routing_policy` | STRING | DEFAULT: `"Simple"` |
+
+---
+
+### 🔗 Relationships
+
+```
+users
+  └── (standalone, no foreign key relationships)
+
+hosted_zones (1)
+  └──── dns_records (many)
+           └── zone_id → hosted_zones.id  [CASCADE DELETE]
+```
+
+> When a **Hosted Zone is deleted**, all its associated **DNS Records are automatically deleted** via `cascade="all, delete-orphan"` — exactly replicating the AWS Route53 behavior.
 
 ## 🌐 API Overview
 Here is a brief look at the available FastAPI endpoints:
