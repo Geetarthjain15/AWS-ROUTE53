@@ -30,11 +30,11 @@ export default function Route53Layout({
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#f2f3f3] text-[#16191f] flex flex-col">
       <Topnav />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900">
+        <main className="flex-1 overflow-y-auto p-6 bg-[#f2f3f3]">
           {children}
         </main>
       </div>
