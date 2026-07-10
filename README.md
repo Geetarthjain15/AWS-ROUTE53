@@ -1,0 +1,125 @@
+# ☁️ AWS Route53 Clone
+
+A full-stack, highly accurate clone of the **Amazon Web Services (AWS) Route53** console. Built with a focus on UI/UX fidelity, this project perfectly replicates the core workflows of managing Hosted Zones and DNS Records in AWS.
+
+![AWS Route53 Clone Banner](https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg)
+
+---
+
+## 🎯 Objective
+The goal of this project is to build a functional clone of the AWS Route53 web application. Instead of being a generic CRUD app, this platform goes above and beyond to replicate the exact Route53 experience—incorporating AWS-styled data tables, modal popups, toast notifications, navigation structures, and form elements.
+
+## 🛠 Tech Stack
+- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, Zustand, Lucide React
+- **Backend**: FastAPI, Python 3, SQLAlchemy
+- **Database**: SQLite
+- **Styling**: AWS specific design system (colors, fonts, borders, responsive layouts)
+
+---
+
+## ✨ Features Delivered
+
+### 1. Authentication (Mocked IAM)
+- Beautifully recreated AWS login and signup pages featuring the exact full-screen isometric background illustrations.
+- Stateful session persistence using Zustand.
+- Automatic **10-minute session expiration** handling.
+
+### 2. Hosted Zones Management
+- **Full CRUD** capabilities for Hosted Zones (Create, View, Edit, Delete).
+- AWS-styled data tables complete with pagination and live text-based search filtering.
+- Persisted securely in the SQLite backend.
+
+### 3. DNS Record Management
+- Dive deep into any Hosted Zone to manage its underlying DNS configurations.
+- **Full CRUD** for DNS Records.
+- Native dropdown support for common Route53 record types: `A, AAAA, CNAME, TXT, MX, NS, PTR, SRV, CAA`.
+- Records are safely cascade-deleted if their parent Hosted Zone is removed.
+
+### 4. Route53 Experience (UI/UX Fidelity)
+- **Navigation**: Exact replica of the dark AWS Topbar and collapsible Left Sidebar.
+- **Tables & Forms**: Matches AWS's precise font sizes (12px/13px), border colors (`#eaeded`), and focus rings (`#0073bb`).
+- **Modals & Alerts**: Custom-built modal components and toast notifications that perfectly mimic AWS’s popup dialogues and green/red banner alerts.
+
+### 5. Mocked Placeholder Sections
+- A beautifully styled **Route53 Dashboard** acting as a landing page with informational cards.
+- Smart "Catch-all" routing that gracefully intercepts unbuilt sidebar links (e.g., Traffic Policies, Health Checks, Resolver) and displays a clean, AWS-themed **"Coming Soon"** placeholder page.
+
+---
+
+## 🚀 Setup Instructions
+
+Follow these steps to run the AWS Route53 Clone locally on your machine.
+
+### Prerequisites
+- Node.js (v18+)
+- Python (v3.10+)
+
+### 1. Backend Setup (FastAPI)
+Open your terminal and navigate to the `backend` folder:
+```bash
+cd backend
+```
+Create a virtual environment and activate it:
+```bash
+python -m venv venv
+
+# Windows:
+.\venv\Scripts\activate
+# Mac/Linux:
+source venv/bin/activate
+```
+Install the Python dependencies:
+```bash
+pip install -r requirements.txt
+```
+Run the FastAPI server:
+```bash
+uvicorn main:app --reload --port 8000
+```
+*(The backend runs on `http://127.0.0.1:8000`)*
+
+### 2. Frontend Setup (Next.js)
+Open a **new** terminal window and navigate to the `frontend` folder:
+```bash
+cd frontend
+```
+Install the Node dependencies:
+```bash
+npm install
+```
+Start the development server:
+```bash
+npm run dev
+```
+*(The frontend runs on `http://localhost:3000`)*
+
+---
+
+## 🏗 Architecture Overview
+This application follows a modern decoupled architecture:
+1. **Client Layer**: Next.js React application handles all routing, state management (Zustand), and UI rendering. API calls are standardized through an Axios instance (`api.ts`).
+2. **API Layer**: FastAPI serves as a lightweight, lightning-fast backend. It provides RESTful endpoints to handle Auth, Zones, and DNS Records, utilizing Pydantic for strict request/response validation.
+3. **Data Layer**: SQLAlchemy ORM manages the connection to a local SQLite database (`AWS_CLONE.db`).
+
+## 🗄 Database Schema
+The SQLite database consists of 3 primary tables:
+- **`users`**: Stores mocked IAM credentials (`id`, `email`, `account_name`, `password`, `created_at`).
+- **`hosted_zones`**: Stores domains (`id`, `name`, `type`, `comment`, `created_at`).
+- **`dns_records`**: Stores DNS entries (`id`, `zone_id` (FK), `name`, `type`, `value`, `ttl`, `routing_policy`). Linked to `hosted_zones` via Foreign Key with `ON DELETE CASCADE`.
+
+## 🌐 API Overview
+Here is a brief look at the available FastAPI endpoints:
+- `POST /auth/login` - Authenticate and receive a mock access token.
+- `POST /auth/signup` - Register a new mocked IAM user.
+- `GET /zones/` - Retrieve paginated list of Hosted Zones.
+- `POST /zones/` - Create a new Hosted Zone.
+- `PUT /zones/{id}` - Edit a Hosted Zone.
+- `DELETE /zones/{id}` - Delete a Hosted Zone.
+- `GET /zones/{id}/records/` - Retrieve DNS records for a specific zone.
+- `POST /zones/{id}/records/` - Create a new DNS record.
+- `PUT /records/{id}` - Edit a DNS record.
+- `DELETE /records/{id}` - Delete a DNS record.
+
+---
+
+> *This project was built to demonstrate full-stack engineering proficiency and UI/UX replication skills. It is not affiliated with Amazon Web Services.*
