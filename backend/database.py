@@ -1,8 +1,11 @@
+import os
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./route53_clone.db"
+# Use DB_DIR environment variable if it exists (for Render persistent disk), otherwise default to local directory
+DB_DIR = os.getenv("DB_DIR", ".")
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{os.path.join(DB_DIR, 'route53_clone.db')}"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
