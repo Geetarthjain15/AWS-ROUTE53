@@ -1,23 +1,21 @@
-# ☁️ AWS Route53 Clone
+# AWS Route53 Clone
 
 A full-stack, highly accurate clone of the **Amazon Web Services (AWS) Route53** console. Built with a focus on UI/UX fidelity, this project perfectly replicates the core workflows of managing Hosted Zones and DNS Records in AWS.
 
-![AWS Route53 Clone Banner](https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg)
-
 ---
 
-## 🎯 Objective
-The goal of this project is to build a functional clone of the AWS Route53 web application. Instead of being a generic CRUD app, this platform goes above and beyond to replicate the exact Route53 experience—incorporating AWS-styled data tables, modal popups, toast notifications, navigation structures, and form elements.
+## Objective
+The goal of this project is to build a functional clone of the AWS Route53 web application. Rather than being a generic CRUD application, this platform goes above and beyond to replicate the exact Route53 experience — incorporating AWS-styled data tables, modal popups, toast notifications, navigation structures, and form elements.
 
-## 🛠 Tech Stack
+## Tech Stack
 - **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, Zustand, Lucide React
 - **Backend**: FastAPI, Python 3, SQLAlchemy
 - **Database**: SQLite
-- **Styling**: AWS specific design system (colors, fonts, borders, responsive layouts)
+- **Styling**: AWS-specific design system (colors, fonts, borders, responsive layouts)
 
 ---
 
-## ✨ Features Delivered
+## Features Delivered
 
 ### 1. Authentication (Mocked IAM)
 - Beautifully recreated AWS login and signup pages featuring the exact full-screen isometric background illustrations.
@@ -25,28 +23,27 @@ The goal of this project is to build a functional clone of the AWS Route53 web a
 - Automatic **10-minute session expiration** handling.
 
 ### 2. Hosted Zones Management
-- **Full CRUD** capabilities for Hosted Zones (Create, View, Edit, Delete).
+- Full CRUD capabilities for Hosted Zones (Create, View, Edit, Delete).
 - AWS-styled data tables complete with pagination and live text-based search filtering.
 - Persisted securely in the SQLite backend.
 
 ### 3. DNS Record Management
-- Dive deep into any Hosted Zone to manage its underlying DNS configurations.
-- **Full CRUD** for DNS Records.
-- Native dropdown support for common Route53 record types: `A, AAAA, CNAME, TXT, MX, NS, PTR, SRV, CAA`.
-- Records are safely cascade-deleted if their parent Hosted Zone is removed.
+- Full CRUD for DNS Records within any Hosted Zone.
+- Native dropdown support for all common Route53 record types: `A`, `AAAA`, `CNAME`, `TXT`, `MX`, `NS`, `PTR`, `SRV`, `CAA`.
+- Records are cascade-deleted when their parent Hosted Zone is removed.
 
 ### 4. Route53 Experience (UI/UX Fidelity)
 - **Navigation**: Exact replica of the dark AWS Topbar and collapsible Left Sidebar.
 - **Tables & Forms**: Matches AWS's precise font sizes (12px/13px), border colors (`#eaeded`), and focus rings (`#0073bb`).
-- **Modals & Alerts**: Custom-built modal components and toast notifications that perfectly mimic AWS’s popup dialogues and green/red banner alerts.
+- **Modals & Alerts**: Custom-built modal components and toast notifications that perfectly mimic AWS's popup dialogues and green/red banner alerts.
 
 ### 5. Mocked Placeholder Sections
-- A beautifully styled **Route53 Dashboard** acting as a landing page with informational cards.
-- Smart "Catch-all" routing that gracefully intercepts unbuilt sidebar links (e.g., Traffic Policies, Health Checks, Resolver) and displays a clean, AWS-themed **"Coming Soon"** placeholder page.
+- A Route53 Dashboard acting as a landing page with informational cards.
+- Smart catch-all routing that gracefully intercepts unbuilt sidebar links (Traffic Policies, Health Checks, Resolver) and displays a clean, AWS-themed "Coming Soon" placeholder page.
 
 ---
 
-## 🚀 Setup Instructions
+## Setup Instructions
 
 Follow these steps to run the AWS Route53 Clone locally on your machine.
 
@@ -95,19 +92,53 @@ npm run dev
 
 ---
 
-## 🏗 Architecture Overview
-This application follows a modern decoupled architecture:
-1. **Client Layer**: Next.js React application handles all routing, state management (Zustand), and UI rendering. API calls are standardized through an Axios instance (`api.ts`).
-2. **API Layer**: FastAPI serves as a lightweight, lightning-fast backend. It provides RESTful endpoints to handle Auth, Zones, and DNS Records, utilizing Pydantic for strict request/response validation.
-3. **Data Layer**: SQLAlchemy ORM manages the connection to a local SQLite database (`AWS_CLONE.db`).
+## Architecture Overview
 
-## 🗄 Database Schema
+This application follows a modern, decoupled three-tier architecture that cleanly separates concerns across the presentation, business logic, and data layers.
+
+```
++---------------------------+        HTTP/REST        +---------------------------+
+|      CLIENT LAYER         | ----------------------> |       API LAYER           |
+|   Next.js 14 (Vercel)     |                         |   FastAPI (Render)        |
+|                           | <---------------------- |                           |
+|  - App Router (TypeScript)|        JSON             |  - RESTful Endpoints      |
+|  - Zustand (Auth State)   |                         |  - Pydantic Validation    |
+|  - Axios (HTTP Client)    |                         |  - SQLAlchemy ORM         |
+|  - Tailwind CSS (UI)      |                         |                           |
++---------------------------+                         +-------------+-------------+
+                                                                    |
+                                                                    | SQL
+                                                                    v
+                                                      +---------------------------+
+                                                      |       DATA LAYER          |
+                                                      |   SQLite Database         |
+                                                      |                           |
+                                                      |  - users                  |
+                                                      |  - hosted_zones           |
+                                                      |  - dns_records            |
+                                                      +---------------------------+
+```
+
+### Layer Breakdown
+
+**Client Layer (Next.js)**
+The React frontend handles all routing via the Next.js App Router, manages authentication state globally with Zustand, and communicates with the backend exclusively through a centralized Axios instance (`api.ts`). The `NEXT_PUBLIC_API_URL` environment variable allows the same codebase to point to localhost during development and to the live Render backend in production.
+
+**API Layer (FastAPI)**
+FastAPI serves as a lightweight, high-performance backend. It exposes a set of RESTful endpoints organized by domain (auth, zones, records). All incoming request bodies are strictly validated using Pydantic schemas before reaching the database layer, ensuring data integrity throughout.
+
+**Data Layer (SQLite + SQLAlchemy)**
+SQLAlchemy ORM manages all interactions with the SQLite database. Models are defined declaratively and relationships are enforced at the ORM level (e.g., cascade delete from `hosted_zones` to `dns_records`). The database file is created automatically on first startup if it does not already exist.
+
+---
+
+## Database Schema
 
 The SQLite database consists of **3 tables** managed via SQLAlchemy ORM. The schema is defined in [`backend/models.py`](./backend/models.py).
 
 ---
 
-### 📋 `users`
+### `users`
 Stores mocked IAM user credentials for authentication.
 
 | Column | Type | Constraints |
@@ -120,7 +151,7 @@ Stores mocked IAM user credentials for authentication.
 
 ---
 
-### 🌐 `hosted_zones`
+### `hosted_zones`
 Stores all DNS Hosted Zones created by users.
 
 | Column | Type | Constraints |
@@ -133,7 +164,7 @@ Stores all DNS Hosted Zones created by users.
 
 ---
 
-### 📝 `dns_records`
+### `dns_records`
 Stores individual DNS records belonging to a Hosted Zone.
 
 | Column | Type | Constraints |
@@ -148,7 +179,7 @@ Stores individual DNS records belonging to a Hosted Zone.
 
 ---
 
-### 🔗 Relationships
+### Relationships
 
 ```
 users
@@ -159,20 +190,24 @@ hosted_zones (1)
            └── zone_id → hosted_zones.id  [CASCADE DELETE]
 ```
 
-> When a **Hosted Zone is deleted**, all its associated **DNS Records are automatically deleted** via `cascade="all, delete-orphan"` — exactly replicating the AWS Route53 behavior.
+> When a Hosted Zone is deleted, all its associated DNS Records are automatically deleted via `cascade="all, delete-orphan"` — exactly replicating the AWS Route53 behavior.
 
-## 🌐 API Overview
-Here is a brief look at the available FastAPI endpoints:
-- `POST /auth/login` - Authenticate and receive a mock access token.
-- `POST /auth/signup` - Register a new mocked IAM user.
-- `GET /zones/` - Retrieve paginated list of Hosted Zones.
-- `POST /zones/` - Create a new Hosted Zone.
-- `PUT /zones/{id}` - Edit a Hosted Zone.
-- `DELETE /zones/{id}` - Delete a Hosted Zone.
-- `GET /zones/{id}/records/` - Retrieve DNS records for a specific zone.
-- `POST /zones/{id}/records/` - Create a new DNS record.
-- `PUT /records/{id}` - Edit a DNS record.
-- `DELETE /records/{id}` - Delete a DNS record.
+---
+
+## API Overview
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/auth/signup` | Register a new mocked IAM user |
+| `POST` | `/api/auth/login` | Authenticate and receive a mock access token |
+| `GET` | `/api/zones/` | Retrieve paginated list of Hosted Zones |
+| `POST` | `/api/zones/` | Create a new Hosted Zone |
+| `PUT` | `/api/zones/{id}` | Edit a Hosted Zone |
+| `DELETE` | `/api/zones/{id}` | Delete a Hosted Zone and its records |
+| `GET` | `/api/zones/{id}/records/` | Retrieve DNS records for a specific zone |
+| `POST` | `/api/zones/{id}/records/` | Create a new DNS record |
+| `PUT` | `/api/records/{id}` | Edit a DNS record |
+| `DELETE` | `/api/records/{id}` | Delete a DNS record |
 
 ---
 
