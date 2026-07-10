@@ -211,4 +211,4 @@ hosted_zones (1)
 
 ---
 
-> *This project was built to demonstrate full-stack engineering proficiency and UI/UX replication skills. It is not affiliated with Amazon Web Services.*
+
